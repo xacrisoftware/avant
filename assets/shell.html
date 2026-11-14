@@ -2,153 +2,146 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<title>Avant Controls</title>
+<title>avant</title>
 <style>
-  :root { color-scheme: dark; --bg: #101115; --line: #252830; --card: #1a1c23; --raised: #242630; --text: #eaecf1; --muted: #858b9b; --accent: #a7a7ff; }
-  * { box-sizing: border-box; }
-  html,body { margin:0; height:100%; overflow:hidden; background:var(--bg); color:var(--text); font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif; user-select: none; }
-  button { border:0; color:inherit; font:inherit; cursor:pointer; background:transparent; }
-  button:focus-visible, input:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
-  .shell { height:106px; padding: 0 15px; background:linear-gradient(180deg, #14151a, #101115); border-bottom:1px solid var(--line); }
-  .top { display:flex; align-items:center; gap:11px; height:49px; }
-  .brand { display:flex; align-items:center; gap:8px; width:100px; flex:none; padding-left:7px; color:#f2f2f7; font-size:16px; font-weight:760; letter-spacing:-.6px; }
-  .brand-mark { width:19px; height:19px; display:grid; place-items:center; border-radius:6px; background:linear-gradient(145deg, #a2a6ff, #555ca3); color:#0e1023; font-size:13px; font-weight:900; }
-  .tabs { flex:1; min-width:0; height:43px; display:flex; align-items:end; gap:5px; overflow-x:auto; scrollbar-width:none; }
-  .tabs::-webkit-scrollbar { display:none; }
-  .tab { min-width:105px; max-width:211px; flex: 1 1 165px; height:35px; display:flex; align-items:center; gap:8px; padding:0 9px 0 12px; border-radius:10px 10px 6px 6px; color:#979ca9; background:#1a1c21; transition:background .13s,color .13s; }
-  .tab.active { color:#f4f4f8; background:#2a2c35; box-shadow:inset 0 1px rgba(255,255,255,.055); }
-  .tab:hover:not(.active) { background:#22252c; }
-  .tab .dot { width:7px; height:7px; border-radius:50%; flex:none; background:#6e7687; }
-  .tab.private .dot { background:var(--accent); }
-  .tab.active .dot { background:#bfc2ff; }
-  .tab-title { text-align:left; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; flex:1; font-size:12px; font-weight:500; }
-  .tab-x { width:22px; height:22px; display:grid; place-items:center; border-radius:6px; flex:none; font-size:15px; opacity:.62; }
-  .tab-x:hover { opacity:1; background:#40424b; }
-  .icon { width:30px; height:30px; flex:none; display:grid; place-items:center; border-radius:8px; color:#9ba0ad; font-size:17px; transition:background .13s, color .13s; }
-  .icon:hover:not(:disabled) { background:#2a2d37; color:#eef0f7; }
-  .icon:disabled { opacity:.3; cursor:default; }
-  .plus { background:#1f2129; margin-left:2px; margin-bottom:5px; width:28px; height:28px; border:1px solid #2c2e38; font-size:19px; }
-  .private-btn { margin-bottom:5px; font-size:12px; letter-spacing:-.1px; border:1px solid var(--line); padding:0 11px; min-width:70px; height:28px; border-radius:8px; color:#c8c6ff; }
-  .private-btn:hover { background:#262334; }
-  .nav { display:flex; align-items:center; gap:7px; height:55px; }
-  .nav-icon { font-size:20px; font-family: Arial,sans-serif; }
-  .nav .group { display:flex; align-items:center; gap:1px; }
-  .address-wrap { flex:1; height:36px; min-width:100px; display:flex; align-items:center; gap:10px; padding:0 13px; background:#20222a; border:1px solid #30333d; border-radius:11px; transition:border-color .15s,background .15s; }
-  .address-wrap:focus-within { background:#252731; border-color:#555b79; }
-  .lock { font-size:13px; flex:none; color:#8e94a3; }
-  #address { flex:1; min-width:0; height:100%; padding:0; font-size:13px; border:0; outline:none; background:transparent; color:var(--text); font-family:inherit; user-select:text; }
-  #address::placeholder { color:#737887; }
-  .kbd { font-size:10px; color:#686e7d; border:1px solid #3b3e49; padding:2px 5px; border-radius:5px; white-space:nowrap; }
-  .menu { font-size:20px; }
-  .private-mark { color:#aaa9ff; font-size:11px; font-weight:600; border-radius:8px; background:#2a253c; padding:7px 10px; }
-  .settings-pane { display:none; margin:0 2px 8px 2px; padding:14px 17px 12px; background:#191b23; border:1px solid #2b2f39; border-radius:13px; height:107px; align-items:center; gap:17px; }
-  .settings-pane.open { display:flex; }
-  .avatar { display:grid; place-items:center; width:42px; height:42px; border-radius:13px; background:#303044; color:#c6c6ff; font-size:21px; font-weight:700; flex:none; }
-  .settings-copy { flex:1; min-width:0; }
-  .settings-copy strong { display:block; font-size:13px; }
-  .settings-copy span { display:block; margin-top:4px; color:var(--muted); font-size:11px; }
-  #nickname { width:min(220px,29vw); padding:9px 10px; border:1px solid #353847; border-radius:9px; outline:none; background:#252833; color:var(--text); font-family:inherit; font-size:12px; user-select:text; }
-  .save { background:#c7c9ff; color:#151725; border-radius:9px; font-size:12px; padding:10px 16px; font-weight:700; }
-  .save:hover { background:#e0e0ff; }
-  .note { white-space:nowrap; }
+:root { color-scheme: dark; --black: #000; --white: #fff; --line: rgba(255,255,255,.24); --dim: rgba(255,255,255,.55); }
+* { box-sizing: border-box; }
+html,body { height:100%; margin:0; overflow:hidden; background:var(--black); color:var(--white); font:13px "Segoe UI",Arial,sans-serif; user-select:none; }
+button,input { font:inherit; }
+button { color:inherit; cursor:pointer; background:transparent; border:0; }
+button:focus-visible, input:focus-visible { outline:1px solid #fff; outline-offset:-1px; }
+button:disabled { cursor:default; opacity:.25; }
+.shell { height:78px; border-bottom:1px solid var(--line); }
+.top { height:35px; display:flex; align-items:stretch; gap:0; border-bottom:1px solid var(--line); }
+.brand { width:95px; flex:none; padding-left:18px; display:flex; align-items:center; font-size:14px; letter-spacing:-.6px; font-weight:700; }
+.tabs { min-width:0; flex:1; display:flex; overflow-x:auto; scrollbar-width:none; }
+.tabs::-webkit-scrollbar { display:none; }
+.tab { height:35px; min-width:102px; max-width:190px; flex:1 1 154px; display:flex; align-items:center; padding:0 7px 0 13px; gap:7px; border-left:1px solid var(--line); border-bottom:1px solid transparent; color:var(--dim); cursor:pointer; }
+.tab.active { color:#fff; border-bottom:2px solid #fff; }
+.tab:hover { color:#fff; }
+.tab-title { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; }
+.tab.private .tab-title::before { content:"◌ "; font-size:13px; }
+.tab-x { width:22px; height:24px; flex:none; padding:0; font-size:17px; font-weight:300; color:var(--dim); }
+.tab-x:hover { color:#fff; }
+.top-action { width:38px; flex:none; display:grid; place-items:center; border-left:1px solid var(--line); font-size:19px; line-height:1; }
+.top-action:hover, .tool:hover:not(:disabled) { background:rgba(255,255,255,.10); }
+.top-action.private { font-size:13px; }
+.nav { height:42px; display:flex; gap:0; align-items:stretch; padding:0 7px; }
+.tool { width:38px; height:41px; flex:none; display:grid; place-items:center; font-family:Arial,sans-serif; font-size:18px; }
+.tool.small { font-size:16px; }
+.address-box { flex:1; display:flex; align-items:center; height:29px; margin:auto 7px; border:1px solid var(--line); min-width:80px; }
+.address-box:focus-within { border-color:#fff; }
+#address { width:100%; height:100%; min-width:0; outline:0; border:0; background:transparent; color:var(--white); font-size:12px; padding:0 11px; user-select:text; }
+#address::placeholder { color:var(--dim); }
+#settings-pane { height:56px; display:none; align-items:center; gap:13px; padding:0 18px; border-bottom:1px solid var(--line); background:#000; }
+#settings-pane.open { display:flex; }
+#settings-pane .label { min-width:58px; font-size:12px; }
+#nickname { width:clamp(110px,24vw,220px); background:#000; color:#fff; border:1px solid var(--line); border-radius:0; outline:0; padding:8px 10px; user-select:text; }
+#nickname:focus { border-color:#fff; }
+#save { height:33px; padding:0 15px; border:1px solid #fff; color:#000; background:#fff; }
+#save:hover { background:#ddd; }
+#note { margin-left:auto; font-size:11px; color:var(--dim); overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+@media(max-width:760px) { .brand{width:71px;padding-left:11px;} .top-action{width:34px;} .tool{width:31px;} #note{display:none;} }
 </style>
 </head>
 <body>
-<div class="shell">
-  <div class="top">
-    <div class="brand"><span class="brand-mark">a</span> avant<span style="color:#656777;font-size:10px;margin-left:1px;font-weight:500">/ beta</span></div>
-    <div class="tabs" id="tabs"></div>
-    <button class="icon plus" title="New tab (Ctrl+T)" id="new">+</button>
-    <button class="private-btn" title="New private tab (Ctrl+Shift+N)" id="private">Private +</button>
-  </div>
-  <div class="nav">
-    <div class="group">
-      <button class="icon nav-icon" id="back" title="Back">‹</button>
-      <button class="icon nav-icon" id="forward" title="Forward">›</button>
-      <button class="icon" id="reload" title="Reload" style="font-size:17px">↻</button>
+  <div class="shell">
+    <div class="top">
+      <div class="brand">avant.</div>
+      <div class="tabs" id="tabs" aria-label="Tabs"></div>
+      <button id="new" class="top-action" title="New tab · Ctrl+T" aria-label="New tab">+</button>
+      <button id="private" class="top-action private" title="New private tab · Ctrl+Shift+N" aria-label="New private tab">◌</button>
     </div>
-    <div class="address-wrap">
-      <span class="lock" id="lock">⌕</span>
-      <input id="address" type="text" spellcheck="false" autocomplete="off" placeholder="Search Google or enter address" />
-      <span class="kbd" id="hint">Ctrl L</span>
+    <div class="nav">
+      <button id="back" class="tool" title="Back" aria-label="Back">‹</button>
+      <button id="forward" class="tool" title="Forward" aria-label="Forward">›</button>
+      <button id="reload" class="tool small" title="Reload" aria-label="Reload">↻</button>
+      <div class="address-box"><input id="address" type="text" spellcheck="false" autocomplete="off" placeholder="Search Google or enter URL" aria-label="Address" /></div>
+      <button id="settings" class="tool" title="Settings" aria-label="Settings">···</button>
     </div>
-    <button class="icon" id="home" title="Home" style="font-size:15px">⌂</button>
-    <span id="private-mark" class="private-mark" style="display:none">Private</span>
-    <button class="icon menu" id="settings" title="Settings">⋯</button>
   </div>
-</div>
-<div class="settings-pane" id="settings-pane">
-  <div class="avatar" id="avatar">G</div>
-  <div class="settings-copy">
-    <strong>Local profile</strong>
-    <span>Saved on this device. No Avant account or syncing.</span>
+  <div id="settings-pane">
+    <span class="label">Profile</span>
+    <input id="nickname" maxlength="36" spellcheck="false" aria-label="Profile name" />
+    <button id="save">Save</button>
+    <span id="note">Only on this device.</span>
   </div>
-  <input id="nickname" placeholder="Your display name" maxlength="36" />
-  <button class="save" id="save">Save</button>
-</div>
 <script>
 (() => {
   const q = id => document.getElementById(id);
-  const send = (cmd, extra={}) => window.ipc.postMessage(JSON.stringify({cmd,...extra}));
-  const address=q('address'), tabs=q('tabs'), settings=q('settings-pane');
-  let state={tabs:[],active:null,url:'',private:false,nickname:'Guest',canBack:false,canForward:false,settingsOpen:false};
-  let lastActive=null;
+  const send = (cmd, extra = {}) => window.ipc.postMessage(JSON.stringify({cmd, ...extra}));
+  const address = q('address'), tabs = q('tabs'), settings = q('settings-pane');
+  let state = { tabs:[], active:null, url:'', private:false, nickname:'Guest', canBack:false, canForward:false, loading:false, settingsOpen:false };
+  let lastActive = null;
+
   function render() {
-    const keepFocus = document.activeElement === address;
+    const addressFocused = document.activeElement === address;
     const scroll = tabs.scrollLeft;
-    const fragment=document.createDocumentFragment();
-    state.tabs.forEach(tab => {
-      const el=document.createElement('div');
-      el.className='tab'+(tab.id===state.active?' active':'')+(tab.private?' private':'');
-      el.title=tab.url;
-      const dot=document.createElement('span');dot.className='dot';
-      const label=document.createElement('span');label.className='tab-title';label.textContent=tab.loading?'Loading…':tab.title||'New tab';
-      const close=document.createElement('button');close.className='tab-x';close.textContent='×';close.title='Close tab';close.addEventListener('click', e=>{e.stopPropagation();send('close',{id:tab.id});});
-      el.append(dot,label,close);
-      el.addEventListener('click',()=>send('select',{id:tab.id}));
-      fragment.append(el);
-    });
+    const fragment = document.createDocumentFragment();
+    for (const tab of state.tabs) {
+      const item = document.createElement('div');
+      item.className = 'tab' + (tab.id === state.active ? ' active' : '') + (tab.private ? ' private' : '');
+      item.title = tab.url || '';
+      const label = document.createElement('span');
+      label.className = 'tab-title';
+      label.textContent = tab.loading ? 'Loading…' : (tab.title || 'New tab');
+      const close = document.createElement('button');
+      close.className = 'tab-x';
+      close.textContent = '×';
+      close.title = 'Close tab';
+      close.setAttribute('aria-label', 'Close tab');
+      close.addEventListener('click', event => {
+        event.stopPropagation();
+        send('close', {id:tab.id});
+      });
+      item.append(label, close);
+      item.addEventListener('click', () => send('select', {id:tab.id}));
+      fragment.append(item);
+    }
     tabs.replaceChildren(fragment);
-    tabs.scrollLeft=scroll;
-    if (state.active!==lastActive) { lastActive=state.active; address.blur(); }
-    if (!keepFocus || document.activeElement!==address) address.value=state.url||'';
-    q('back').disabled=!state.canBack; q('forward').disabled=!state.canForward;
-    q('reload').textContent=state.loading?'×':'↻';
-    q('lock').textContent=state.url.startsWith('https:')?'♧':'⌕';
-    q('hint').style.display=state.url?'none':'inline';
-    q('private-mark').style.display=state.private?'inline':'none';
-    settings.classList.toggle('open',state.settingsOpen);
-    q('avatar').textContent=(state.nickname||'G').charAt(0).toUpperCase();
-    if (document.activeElement!==q('nickname'))q('nickname').value=state.nickname||'';
+    tabs.scrollLeft = scroll;
+    if (state.active !== lastActive) {
+      lastActive = state.active;
+      if (addressFocused) address.blur();
+    }
+    if (document.activeElement !== address) address.value = state.url || '';
+    q('back').disabled = !state.canBack;
+    q('forward').disabled = !state.canForward;
+    settings.classList.toggle('open', !!state.settingsOpen);
+    if (document.activeElement !== q('nickname')) q('nickname').value = state.nickname || '';
+    document.title = state.private ? 'avant · private' : 'avant';
   }
-  window.avantSync = data => {state=data;render()};
-  window.focusAddress = () => {address.focus();address.select()};
-  q('new').onclick=()=>send('new');
-  q('private').onclick=()=>send('private');
-  q('back').onclick=()=>send('back');
-  q('forward').onclick=()=>send('forward');
-  q('reload').onclick=()=>send(state.loading?'reload':'reload');
-  q('home').onclick=()=>send('home');
-  q('settings').onclick=()=>send('settings');
-  q('save').onclick=()=>send('nickname',{value:q('nickname').value});
-  q('nickname').addEventListener('keydown',e=>{if(e.key==='Enter')q('save').click()});
+  window.avantSync = data => { state = data; render(); };
+  window.focusAddress = () => { address.focus(); address.select(); };
+  q('new').onclick = () => send('new');
+  q('private').onclick = () => send('private');
+  q('back').onclick = () => send('back');
+  q('forward').onclick = () => send('forward');
+  q('reload').onclick = () => send('reload');
+  q('settings').onclick = () => send('settings');
+  q('save').onclick = () => send('nickname', {value:q('nickname').value});
+  q('nickname').addEventListener('keydown', e => { if (e.key === 'Enter') q('save').click(); });
   address.addEventListener('keydown', e => {
-    if(e.key==='Enter'){e.preventDefault();send('navigate',{value:address.value});address.blur();}
-    if(e.key==='Escape'){address.value=state.url||'';address.blur();}
+    if (e.key === 'Enter') { e.preventDefault(); send('navigate', {value:address.value}); address.blur(); }
+    if (e.key === 'Escape') { address.value = state.url || ''; address.blur(); }
   });
-  document.addEventListener('keydown',e=>{
-    if(e.ctrlKey&&!e.altKey){
-      const key=e.key.toLowerCase();
-      if(key==='t'){e.preventDefault();send('new');}
-      if(key==='w'){e.preventDefault();send('close',{id:state.active});}
-      if(key==='l'){e.preventDefault();window.focusAddress();}
-      if(key==='n'&&e.shiftKey){e.preventDefault();send('private');}
-      if(e.key==='Tab'){e.preventDefault();const index=state.tabs.findIndex(t=>t.id===state.active);if(state.tabs.length)send('select',{id:state.tabs[(index+1)%state.tabs.length].id});}
+  document.addEventListener('keydown', e => {
+    if (!e.ctrlKey || e.altKey) return;
+    const key = e.key.toLowerCase();
+    if (key === 't') { e.preventDefault(); send('new'); }
+    if (key === 'w') { e.preventDefault(); send('close', {id:state.active}); }
+    if (key === 'l') { e.preventDefault(); window.focusAddress(); }
+    if (key === 'n' && e.shiftKey) { e.preventDefault(); send('private'); }
+    if (e.key === 'Tab' && state.tabs.length) {
+      e.preventDefault();
+      const index = state.tabs.findIndex(tab => tab.id === state.active);
+      send('select', {id:state.tabs[(index + 1) % state.tabs.length].id});
     }
   });
   render();
 })();
 </script>
-</body></html>
+</body>
+</html>
