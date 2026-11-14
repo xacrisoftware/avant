@@ -296,7 +296,7 @@ void paint(HWND h) {
     HFONT bold = CreateFontW(-26, 0, 0, 0, FW_SEMIBOLD, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH, L"Segoe UI");
     HGDIOBJ old = SelectObject(dc, font);
     RECT header{0, 0, client.right, BAR_H}; fill(dc, header, PANEL);
-    int tabWidth = std::min(180, std::max(85, (client.right - 150) / std::max(1, (int)tabs.size())));
+    int tabWidth = std::min<int>(180, std::max<int>(85, (client.right - 150) / std::max<int>(1, (int)tabs.size())));
     for (int i = 0; i < (int)tabs.size(); ++i) {
         int x = i * tabWidth;
         if (x + tabWidth > client.right - 115) break;
@@ -339,7 +339,7 @@ void paint(HWND h) {
         y += 82;
         SelectObject(dc, font);
         if (!t.page.error.empty()) { drawText(dc, t.page.error, RECT{left, y, client.right - 35, y + 50}, RGB(235, 136, 136), DT_WORDBREAK); y += 55; }
-        int width = std::max(120, client.right - left - 48);
+        int width = std::max<int>(120, client.right - left - 48);
         RECT body{left, y, left + width, y};
         DrawTextW(dc, t.page.text.c_str(), -1, &body, DT_WORDBREAK | DT_CALCRECT | DT_NOPREFIX);
         body.bottom = std::min(body.bottom, body.top + 200000);
@@ -373,8 +373,8 @@ LRESULT CALLBACK editSubclass(HWND hwnd, UINT msg, WPARAM w, LPARAM l) {
 }
 void layout(HWND h) {
     RECT rc{}; GetClientRect(h, &rc);
-    MoveWindow(addressEdit, 117, 49, std::max(100, rc.right - 130), 32, TRUE);
-    MoveWindow(nameEdit, 38, 204, std::max(200, std::min(400, rc.right - 70)), 32, TRUE);
+    MoveWindow(addressEdit, 117, 49, std::max<int>(100, rc.right - 130), 32, TRUE);
+    MoveWindow(nameEdit, 38, 204, std::max<int>(200, std::min<int>(400, rc.right - 70)), 32, TRUE);
 }
 void initData() {
     wchar_t path[MAX_PATH]{};
@@ -444,7 +444,7 @@ LRESULT CALLBACK windowProc(HWND h, UINT msg, WPARAM w, LPARAM l) {
                 else ShowWindow(nameEdit, SW_HIDE);
                 InvalidateRect(h, nullptr, FALSE);
             } else {
-                int tabWidth = std::min(180, std::max(85, (rc.right - 150) / std::max(1, (int)tabs.size())));
+                int tabWidth = std::min<int>(180, std::max<int>(85, (rc.right - 150) / std::max<int>(1, (int)tabs.size())));
                 int index = x / tabWidth;
                 if (index >= 0 && index < (int)tabs.size()) {
                     if (x % tabWidth >= tabWidth - 27) closeTab(index);
