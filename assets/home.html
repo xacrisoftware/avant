@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New tab · Avant</title>
+<style>
+:root{color-scheme:dark;--muted:#858a9b;--ink:#f1f2fa;--accent:#aaaaff}
+*{box-sizing:border-box}
+body{background:#0e0f13;color:var(--ink);margin:0;min-height:100vh;font:14px "Segoe UI Variable","Segoe UI",system-ui,sans-serif;overflow-x:hidden}
+body::before{content:"";position:fixed;width:700px;height:600px;top:-210px;left:50%;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(78,76,155,.13),transparent 64%);pointer-events:none}
+.layout{max-width:760px;margin:0 auto;padding:clamp(80px,18vh,180px) 24px 65px;position:relative}
+.dot{display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#878ba0;font-weight:650}
+.dot span{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 22px rgba(167,167,255,.55)}
+h1{font-size:clamp(50px,7vw,90px);letter-spacing:-5px;line-height:1.02;margin:20px 0 16px;font-weight:730}
+h1 em{font-style:normal;color:#7e80a1}
+.subtitle{font-size:15px;line-height:1.7;color:#8f93a3;margin:0 0 37px}
+.search{height:62px;background:#1b1d25;border:1px solid #343644;border-radius:18px;display:flex;align-items:center;gap:13px;padding:8px 10px 8px 21px;transition:border-color .15s,background .15s;box-shadow:0 14px 35px rgba(0,0,0,.15)}
+.search:focus-within{border-color:#62618e;background:#232530}
+.search .magnifier{color:#a4a9bd;font-size:24px}
+.search input{background:transparent;color:#f0f0f7;outline:0;border:0;font:inherit;font-size:15px;min-width:0;flex:1}
+.search input::placeholder{color:#707584}
+.search button{border:0;border-radius:12px;background:#b8b9f7;color:#11121b;height:42px;padding:0 20px;font-weight:700;cursor:pointer}
+.search button:hover{background:#d3d3ff}
+.shortcut{font-size:11px;display:flex;justify-content:space-between;gap:10px;padding:15px 4px;color:#686d7c}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:62px}
+.chips a{border:1px solid #2c2f39;color:#aab0c1;text-decoration:none;border-radius:11px;padding:13px 17px;background:rgba(28,30,39,.65);font-size:12px;transition:background .15s,border-color .15s}
+.chips a:hover{background:#252835;border-color:#55546c;color:#eeeef9}
+.footer{margin-top:42px;border-top:1px solid #252832;padding-top:24px;font-size:12px;line-height:1.7;color:#6c7281}
+.footer strong{color:#aaaabb;font-weight:550}
+</style>
+</head>
+<body>
+<main class="layout">
+  <div class="dot"><span></span>A quieter way to browse</div>
+  <h1>Make space<br>for <em>the web.</em></h1>
+  <p class="subtitle">No clutter, no noise. Just your tabs and wherever the internet takes you.</p>
+  <form class="search" id="form">
+    <span class="magnifier">⌕</span>
+    <input id="search" autocomplete="off" spellcheck="false" autofocus placeholder="Search the web or enter a URL" aria-label="Web search or address">
+    <button type="submit">Go ↗</button>
+  </form>
+  <div class="shortcut"><span>Search powered by Google</span><span>Avant / v0.2</span></div>
+  <div class="chips">
+    <a href="https://www.google.com">Google ↗</a>
+    <a href="https://www.wikipedia.org">Wikipedia ↗</a>
+    <a href="https://github.com">GitHub ↗</a>
+    <a href="https://www.youtube.com">YouTube ↗</a>
+  </div>
+  <p class="footer"><strong>Built with Rust.</strong> Web pages use the Windows WebView2 runtime. Avant does not run its own search engine or proxy. Private tabs use a nonpersistent browsing profile.</p>
+</main>
+<script>
+document.getElementById('form').addEventListener('submit', e => {
+  e.preventDefault();
+  const input=document.getElementById('search').value.trim();
+  if (!input) return;
+  const isHttp = /^https?:\/\//i.test(input);
+  const looksDomain = input.includes('.') && !/\s/.test(input) && !input.includes('://') && !input.startsWith('.');
+  window.location.href = isHttp ? input : looksDomain ? 'https://' + input : 'https://www.google.com/search?q='+encodeURIComponent(input);
+});
+</script>
+</body></html>
