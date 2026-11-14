@@ -6,8 +6,4 @@
 
 Avant написан на **Rust**. Сайты открываются через **WebView2** — движок Microsoft Edge, который обычно уже есть в Windows 11. Обычные вкладки сохраняются между запусками, приватные — нет.
 
-### Скачать
 
-Открой [Actions](https://github.com/xacrisoftware/avant/actions/workflows/windows.yml), выбери последнюю успешную сборку и скачай архив **Avant-Windows-x64** из раздела *Artifacts*. Распакуй его и запусти `Avant.exe`.
-
-Собирать проект на своём компьютере не нужно: это делает GitHub Actions.
