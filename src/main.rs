@@ -14,9 +14,12 @@ use winit::{
 };
 use wry::{PageLoadEvent, Rect, WebContext, WebView, WebViewBuilder};
 
+#[cfg(target_os = "windows")]
+use winit::platform::windows::{Color, CornerPreference, WindowExtWindows};
+
 const HOME_URL: &str = "avant://newtab";
-const TOOLBAR_HEIGHT: f64 = 106.0;
-const SETTINGS_HEIGHT: f64 = 218.0;
+const TOOLBAR_HEIGHT: f64 = 78.0;
+const SETTINGS_HEIGHT: f64 = 134.0;
 const MAX_TABS: usize = 24;
 
 #[derive(Debug)]
@@ -440,7 +443,7 @@ impl ApplicationHandler<Event> for Avant {
             return;
         }
         let attributes = Window::default_attributes()
-            .with_title("Avant")
+            .with_title("avant")
             .with_theme(Some(Theme::Dark))
             .with_inner_size(LogicalSize::new(1180.0, 790.0))
             .with_min_inner_size(LogicalSize::new(680.0, 460.0));
@@ -452,6 +455,16 @@ impl ApplicationHandler<Event> for Avant {
                 return;
             }
         };
+        // Keep native Windows close/maximize/minimize and drag/resize behavior,
+        // but make the OS title bar part of Avant's strict monochrome theme.
+        #[cfg(target_os = "windows")]
+        {
+            window.set_title_background_color(Some(Color::from_rgb(0, 0, 0)));
+            window.set_title_text_color(Color::from_rgb(255, 255, 255));
+            window.set_border_color(Some(Color::from_rgb(60, 60, 60)));
+            window.set_corner_preference(CornerPreference::DoNotRound);
+        }
+
         self.window = Some(window);
         let width = self.viewport_size().0;
         let events = self.proxy.clone();
