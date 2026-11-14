@@ -1,0 +1,42 @@
+name: Build Avant (Rust / Windows)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Install stable Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+      - name: Generate dependency lockfile
+        run: cargo generate-lockfile
+      - name: Check Rust code
+        run: cargo check --locked
+      - name: Run unit tests
+        run: cargo test --locked
+      - name: Build release for Windows x64
+        run: cargo build --release --locked
+      - name: Package portable exe
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path dist -Force | Out-Null
+          Copy-Item target/release/avant.exe dist/Avant.exe
+          Compress-Archive -Path dist/Avant.exe -DestinationPath Avant-Windows-x64.zip -Force
+      - name: Upload Avant artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Avant-Windows-x64
+          path: Avant-Windows-x64.zip
+          if-no-files-found: error
