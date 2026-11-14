@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <windowsx.h>
 #include <winhttp.h>
 #include <shlwapi.h>
 #include <shlobj.h>
@@ -23,7 +24,7 @@ constexpr int BAR_H = 92;
 constexpr int TAB_H = 40;
 constexpr int MAX_BYTES = 4 * 1024 * 1024;
 constexpr int MAX_LINKS = 100;
-constexpr wchar_t* HOME = const_cast<wchar_t*>(L"avant://home");
+constexpr const wchar_t* HOME = L"avant://home";
 
 struct Link { std::wstring title, url; RECT rect{}; };
 struct Page {
@@ -303,14 +304,14 @@ void paint(HWND h) {
         fill(dc, r, i == currentTab ? RGB(48, 50, 60) : RGB(31, 33, 39));
         std::wstring title = tabs[i].privateTab ? L"[P] " : L"";
         title += tabs[i].loading ? L"Loading..." : tabs[i].page.title;
-        RECT label{x + 12, 5, x + tabWidth - 25, 37}; drawText(dc, title, FG);
-        RECT close{x + tabWidth - 25, 6, x + tabWidth - 5, 36}; drawText(dc, L"x", MUTED);
+        RECT label{x + 12, 5, x + tabWidth - 25, 37}; drawText(dc, title, label, FG);
+        RECT close{x + tabWidth - 25, 6, x + tabWidth - 5, 36}; drawText(dc, L"x", close, MUTED);
     }
-    RECT plus{client.right - 112, 4, client.right - 84, 38}; drawText(dc, L"+", FG);
-    RECT priv{client.right - 79, 4, client.right - 52, 38}; drawText(dc, L"N", MUTED);
-    RECT sett{client.right - 43, 4, client.right - 12, 38}; drawText(dc, L"S", MUTED);
+    RECT plus{client.right - 112, 4, client.right - 84, 38}; drawText(dc, L"+", plus, FG);
+    RECT priv{client.right - 79, 4, client.right - 52, 38}; drawText(dc, L"N", priv, MUTED);
+    RECT sett{client.right - 43, 4, client.right - 12, 38}; drawText(dc, L"S", sett, MUTED);
     RECT back{12, 47, 40, 87}, forward{46, 47, 74, 87}, reload{80, 47, 107, 87};
-    drawText(dc, L"<", FG); drawText(dc, L">", FG); drawText(dc, L"R", MUTED);
+    drawText(dc, L"<", back, FG); drawText(dc, L">", forward, FG); drawText(dc, L"R", reload, MUTED);
     if (tabs.empty()) { SelectObject(dc, old); DeleteObject(font); DeleteObject(bold); EndPaint(h, &ps); return; }
     const Tab& t = tabs[currentTab];
     int left = 38, top = BAR_H + 22;
@@ -397,11 +398,15 @@ LRESULT CALLBACK windowProc(HWND h, UINT msg, WPARAM w, LPARAM l) {
         addressProc = (WNDPROC)SetWindowLongPtrW(addressEdit, GWLP_WNDPROC, (LONG_PTR)editSubclass);
         nameProc = (WNDPROC)SetWindowLongPtrW(nameEdit, GWLP_WNDPROC, (LONG_PTR)editSubclass);
         initData();
-        std::ifstream in(storeFile("session.txt"), std::ios::binary);
-        std::string line;
-        while (std::getline(in, line) && tabs.size() < 12) {
-            if (line.rfind("https://", 0) == 0 || line.rfind("http://", 0) == 0) newTab(false, wide(line));
+        std::vector<std::wstring> restored;
+        {
+            std::ifstream in(storeFile("session.txt"), std::ios::binary);
+            std::string line;
+            while (std::getline(in, line) && restored.size() < 12) {
+                if (line.rfind("https://", 0) == 0 || line.rfind("http://", 0) == 0) restored.push_back(wide(line));
+            }
         }
+        for (const auto& url : restored) newTab(false, url);
         if (tabs.empty()) newTab();
         layout(h);
         return 0;
